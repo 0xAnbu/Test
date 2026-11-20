@@ -12,3 +12,9 @@ Sin sufijo se corona a dama. Escribe `salir` para terminar.
 
 El juego detecta el jaque mate y el ahogado. Las demás reglas de tablas
 quedan a cargo de los jugadores.
+
+Pruebas:
+
+```sh
+python3 -m unittest
+```
