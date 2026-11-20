@@ -1,5 +1,6 @@
 """Ajedrez local para dos jugadores, sin dependencias externas."""
 
+import argparse
 from dataclasses import dataclass, field
 import re
 
@@ -154,9 +155,19 @@ class Game:
         print(" ", " ".join(FILES))
 
 
-def main():
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="Juega al ajedrez en la terminal.")
+    parser.add_argument("--cpu", nargs="?", const="negras",
+                        choices=("blancas", "negras"),
+                        help="juega contra la máquina (negras por defecto)")
+    args = parser.parse_args(argv)
+    if args.cpu:
+        from ia import best_move
+
     game = Game()
-    print("Ajedrez para dos. Escribe e2e4 para mover o salir para cerrar.")
+    if args.cpu:
+        print(f"La máquina juega con {args.cpu}.")
+    print("Escribe e2e4 para mover o salir para cerrar.")
     print("Mayúsculas: blancas. Promoción: añade q, r, b o n (dama por defecto).")
     while True:
         game.show()
@@ -167,6 +178,12 @@ def main():
             return
         if game.in_check():
             print("Jaque.")
+        if args.cpu and player.lower() == args.cpu:
+            move = best_move(game)
+            if move is None or not game.play(move):
+                raise RuntimeError("La máquina no devolvió una jugada legal.")
+            print(f"Máquina ({player}): {move}")
+            continue
         try:
             move = input(f"{player}> ").strip().lower()
         except (EOFError, KeyboardInterrupt):
