@@ -6,7 +6,12 @@ Hace `GET` a cada URL de `targets.txt` (timeout 5 s) y envía una alerta `POST` 
 
 ## Configuración
 
-Copia `.env.example` a `.env` y rellénalo (las variables de entorno del proceso tienen prioridad sobre `.env`):
+```sh
+cp .env.example .env               # y rellena NOTIFY_URL / NOTIFY_API_KEY
+cp targets.example.txt targets.txt  # y pon tus URLs
+```
+
+Las variables de entorno del proceso tienen prioridad sobre `.env`:
 
 | Variable | Obligatoria | Por defecto | Uso |
 |---|---|---|---|
@@ -22,7 +27,7 @@ python -m pingwatch --once          # una ronda; sale con 1 si alguna alerta no 
 python -m pingwatch --interval 60   # bucle cada 60 s (Ctrl+C para salir)
 ```
 
-Las alertas se reintentan 3 veces con backoff (1, 2, 4 s). Cuerpo: `{"url", "status", "latency_ms"}`.
+Las alertas se reintentan 3 veces con backoff (1, 2, 4 s). Cuerpo JSON, p. ej.: `{"url": "https://example.com", "status": 503, "latency_ms": 12.5}`.
 
 ## Tests
 
