@@ -2,17 +2,23 @@
 
 Juego de ajedrez para dos personas o contra la máquina. Requiere Python 3.10 o posterior.
 
-## Interfaz gráfica
+## Abrir el tablero gráfico
 
-Ejecuta `python3 gui.py`. Necesitas Tkinter. Si tu distribución lo empaqueta aparte,
-instala su paquete de Tkinter (por ejemplo, `python3-tk` en Debian).
+Desde la carpeta del juego, ejecuta:
+
+```sh
+python3 gui.py
+```
+
+Si Python indica que falta Tkinter, instala el paquete de tu sistema
+(por ejemplo, `python3-tk` en Debian).
 
 Elige el modo de juego y pulsa **Nueva partida**. Haz clic en una pieza y luego
 en una de las casillas resaltadas. **Pista** marca una jugada posible y
 **Deshacer** recupera el último turno. Usa **Coronar como** para escoger la pieza
 antes de llevar un peón a la última fila.
 
-## Terminal
+## Jugar en la terminal
 
 Para jugar dos personas en el mismo equipo:
 
