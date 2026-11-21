@@ -1,7 +1,6 @@
 """Ajedrez local para dos jugadores, sin dependencias externas."""
 
 import argparse
-import copy
 from dataclasses import dataclass, field
 import re
 
@@ -157,39 +156,31 @@ class Game:
 
 
 def main(argv=None):
+    from partida import Partida
+
     parser = argparse.ArgumentParser(description="Juega al ajedrez en la terminal.")
     parser.add_argument("--cpu", nargs="?", const="negras",
                         choices=("blancas", "negras"),
                         help="juega contra la máquina (negras por defecto)")
     args = parser.parse_args(argv)
-    if args.cpu:
-        from ia import best_move
 
-    game = Game()
+    partida = Partida(args.cpu)
     if args.cpu:
         print(f"La máquina juega con {args.cpu}.")
     print("Escribe e2e4 para mover, pista, deshacer o salir.")
     print("Mayúsculas: blancas. Promoción: añade q, r, b o n (dama por defecto).")
-    history = []
-
-    def human_turn(state):
-        return not args.cpu or ("blancas" if state.white else "negras") != args.cpu
-
     while True:
-        game.show()
-        player = "Blancas" if game.white else "Negras"
-        if not game.has_legal_move():
-            winner = "Negras" if game.white else "Blancas"
-            print(f"Jaque mate. Ganan {winner}." if game.in_check() else "Tablas por ahogado.")
+        partida.game.show()
+        player = partida.player
+        status = partida.status()
+        if status != "jugando":
+            winner = "Negras" if partida.game.white else "Blancas"
+            print(f"Jaque mate. Ganan {winner}." if status == "jaque_mate" else "Tablas por ahogado.")
             return
-        if game.in_check():
+        if partida.game.in_check():
             print("Jaque.")
-        if args.cpu and player.lower() == args.cpu:
-            move = best_move(game)
-            history.append(copy.deepcopy(game))
-            if move is None or not game.play(move):
-                raise RuntimeError("La máquina no devolvió una jugada legal.")
-            print(f"Máquina ({player}): {move}")
+        if partida.cpu_turn():
+            print(f"Máquina ({player}): {partida.cpu_move()}")
             continue
         try:
             move = input(f"{player}> ").strip().lower()
@@ -199,21 +190,11 @@ def main(argv=None):
         if move == "salir":
             return
         if move == "pista":
-            from ia import best_move as hint
-            print(f"Pista: {hint(game)}")
-            continue
-        if move == "deshacer":
-            turns = [i for i, state in enumerate(history) if human_turn(state)]
-            if not turns:
+            print(f"Pista: {partida.hint()}")
+        elif move == "deshacer":
+            if not partida.undo():
                 print("Nada que deshacer.")
-                continue
-            game = history[turns[-1]]
-            del history[turns[-1]:]
-            continue
-        before = copy.deepcopy(game)
-        if game.play(move):
-            history.append(before)
-        else:
+        elif not partida.play(move):
             print("Movimiento ilegal. Inténtalo de nuevo.")
 
 
