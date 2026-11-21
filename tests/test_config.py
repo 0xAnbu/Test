@@ -41,6 +41,13 @@ class LoadConfigTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "NOTIFY_API_KEY"):
             load_config(self.env)
 
+    def test_rejects_invalid_timeout(self):
+        for value in ("0", "-1", "nan", "inf", "abc"):
+            with self.subTest(value=value):
+                self.env.write_text(f"NOTIFY_URL=u\nNOTIFY_API_KEY=k\nTIMEOUT={value}\n")
+                with self.assertRaisesRegex(ValueError, "TIMEOUT"):
+                    load_config(self.env)
+
     def test_repr_hides_key(self):
         self.assertNotIn("secret", repr(Config("u", "secret")))
 

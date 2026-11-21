@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -57,8 +58,8 @@ def load_config(path: str | os.PathLike[str] = ".env") -> Config:
         timeout = float(values.get("TIMEOUT", 5.0))
     except ValueError:
         raise ValueError("TIMEOUT must be a number") from None
-    if timeout <= 0:
-        raise ValueError("TIMEOUT must be positive")
+    if not math.isfinite(timeout) or timeout <= 0:
+        raise ValueError("TIMEOUT must be a finite positive number")
 
     return Config(
         notify_url=values["NOTIFY_URL"],
