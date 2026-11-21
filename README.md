@@ -18,7 +18,8 @@ python3 ajedrez.py --cpu blancas
 
 Introduce el origen y destino, por ejemplo `e2e4`. Para enrocar, mueve el rey dos casillas.
 Para coronar, añade `q`, `r`, `b` o `n` (dama, torre, alfil o caballo).
-Sin sufijo se corona a dama. Escribe `salir` para terminar.
+Sin sufijo se corona a dama. Escribe `pista` para que la máquina te sugiera una jugada,
+`deshacer` para volver atrás (contra la máquina deshace también su respuesta) o `salir` para terminar.
 
 El juego detecta el jaque mate y el ahogado. Las demás reglas de tablas
 quedan a cargo de los jugadores.

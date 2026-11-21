@@ -1,6 +1,7 @@
 """Ajedrez local para dos jugadores, sin dependencias externas."""
 
 import argparse
+import copy
 from dataclasses import dataclass, field
 import re
 
@@ -167,8 +168,13 @@ def main(argv=None):
     game = Game()
     if args.cpu:
         print(f"La máquina juega con {args.cpu}.")
-    print("Escribe e2e4 para mover o salir para cerrar.")
+    print("Escribe e2e4 para mover, pista, deshacer o salir.")
     print("Mayúsculas: blancas. Promoción: añade q, r, b o n (dama por defecto).")
+    history = []
+
+    def human_turn(state):
+        return not args.cpu or ("blancas" if state.white else "negras") != args.cpu
+
     while True:
         game.show()
         player = "Blancas" if game.white else "Negras"
@@ -180,6 +186,7 @@ def main(argv=None):
             print("Jaque.")
         if args.cpu and player.lower() == args.cpu:
             move = best_move(game)
+            history.append(copy.deepcopy(game))
             if move is None or not game.play(move):
                 raise RuntimeError("La máquina no devolvió una jugada legal.")
             print(f"Máquina ({player}): {move}")
@@ -191,7 +198,22 @@ def main(argv=None):
             return
         if move == "salir":
             return
-        if not game.play(move):
+        if move == "pista":
+            from ia import best_move as hint
+            print(f"Pista: {hint(game)}")
+            continue
+        if move == "deshacer":
+            turns = [i for i, state in enumerate(history) if human_turn(state)]
+            if not turns:
+                print("Nada que deshacer.")
+                continue
+            game = history[turns[-1]]
+            del history[turns[-1]:]
+            continue
+        before = copy.deepcopy(game)
+        if game.play(move):
+            history.append(before)
+        else:
             print("Movimiento ilegal. Inténtalo de nuevo.")
 
 
