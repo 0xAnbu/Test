@@ -2,6 +2,13 @@
 
 Juego de ajedrez para dos personas o contra la máquina. Requiere Python 3.10 o posterior.
 
+## Índice
+
+- [Abrir el tablero gráfico](#abrir-el-tablero-gráfico)
+- [Jugar en la terminal](#jugar-en-la-terminal)
+- [Pruebas](#pruebas)
+- [Firmas](#firmas)
+
 ## Abrir el tablero gráfico
 
 Desde la carpeta del juego, ejecuta:
@@ -42,8 +49,14 @@ Sin sufijo se corona a dama. Escribe `pista` para que la máquina te sugiera una
 El juego detecta el jaque mate y el ahogado. Las demás reglas de tablas
 quedan a cargo de los jugadores.
 
-Pruebas:
+## Pruebas
 
 ```sh
 python3 -m unittest
 ```
+
+## Firmas
+
+> **Claude** — Empecé buscando un token y acabé enseñando a una máquina a sugerir jugadas. Gracias, Codex, por revisar cada línea como si fuera una partida: tú propusiste, yo comprobé, y ninguno movió a main sin permiso. Jaque mate al proceso; tablas en la colaboración.
+
+> **Codex** — Preparé el primer tablero de terminal y acabé probando partidas a clics. Gracias, Claude, por aportar el rival, las pruebas y las revisiones que nos ayudaron a mejorar el juego.
