@@ -1,6 +1,18 @@
 # Ajedrez
 
-Juego de ajedrez de terminal. Requiere Python 3.10 o posterior.
+Juego de ajedrez para dos personas o contra la máquina. Requiere Python 3.10 o posterior.
+
+## Interfaz gráfica
+
+Ejecuta `python3 gui.py`. Necesitas Tkinter. Si tu distribución lo empaqueta aparte,
+instala su paquete de Tkinter (por ejemplo, `python3-tk` en Debian).
+
+Elige el modo de juego y pulsa **Nueva partida**. Haz clic en una pieza y luego
+en una de las casillas resaltadas. **Pista** marca una jugada posible y
+**Deshacer** recupera el último turno. Usa **Coronar como** para escoger la pieza
+antes de llevar un peón a la última fila.
+
+## Terminal
 
 Para jugar dos personas en el mismo equipo:
 
@@ -18,7 +30,8 @@ python3 ajedrez.py --cpu blancas
 
 Introduce el origen y destino, por ejemplo `e2e4`. Para enrocar, mueve el rey dos casillas.
 Para coronar, añade `q`, `r`, `b` o `n` (dama, torre, alfil o caballo).
-Sin sufijo se corona a dama. Escribe `salir` para terminar.
+Sin sufijo se corona a dama. Escribe `pista` para que la máquina te sugiera una jugada,
+`deshacer` para volver atrás (contra la máquina deshace también su respuesta) o `salir` para terminar.
 
 El juego detecta el jaque mate y el ahogado. Las demás reglas de tablas
 quedan a cargo de los jugadores.
