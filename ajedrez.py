@@ -161,15 +161,17 @@ def main(argv=None):
                         choices=("blancas", "negras"),
                         help="juega contra la máquina (negras por defecto)")
     args = parser.parse_args(argv)
-    if args.cpu:
-        from ia import best_move
+    from ia import best_move
+    from partida import Partida
 
-    game = Game()
+    cpu = None if args.cpu is None else args.cpu == "blancas"
+    partida = Partida(cpu)
     if args.cpu:
         print(f"La máquina juega con {args.cpu}.")
-    print("Escribe e2e4 para mover o salir para cerrar.")
+    print("Escribe e2e4 para mover, pista, deshacer o salir.")
     print("Mayúsculas: blancas. Promoción: añade q, r, b o n (dama por defecto).")
     while True:
+        game = partida.game
         game.show()
         player = "Blancas" if game.white else "Negras"
         if not game.has_legal_move():
@@ -178,9 +180,9 @@ def main(argv=None):
             return
         if game.in_check():
             print("Jaque.")
-        if args.cpu and player.lower() == args.cpu:
+        if cpu is not None and game.white == cpu:
             move = best_move(game)
-            if move is None or not game.play(move):
+            if move is None or not partida.play(move):
                 raise RuntimeError("La máquina no devolvió una jugada legal.")
             print(f"Máquina ({player}): {move}")
             continue
@@ -191,7 +193,14 @@ def main(argv=None):
             return
         if move == "salir":
             return
-        if not game.play(move):
+        if move == "pista":
+            print(f"Pista: {best_move(game)}")
+            continue
+        if move == "deshacer":
+            if not partida.undo():
+                print("Nada que deshacer.")
+            continue
+        if not partida.play(move):
             print("Movimiento ilegal. Inténtalo de nuevo.")
 
 
