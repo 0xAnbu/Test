@@ -4,7 +4,6 @@ import tkinter as tk
 from tkinter import ttk
 
 from ajedrez import FILES, RANKS
-from ia import best_move
 from partida import Partida
 
 
@@ -16,8 +15,8 @@ ACCENT = "#e9bd75"
 LIGHT = "#e6d9be"
 DARK = "#729182"
 PIECES = dict(zip("kqrbnp", "♚♛♜♝♞♟"))
-MODES = {"Dos jugadores": None, "Máquina con negras": False,
-         "Máquina con blancas": True}
+MODES = {"Dos jugadores": None, "Máquina con negras": "negras",
+         "Máquina con blancas": "blancas"}
 
 
 class ChessWindow:
@@ -96,13 +95,14 @@ class ChessWindow:
         self.refresh()
 
     def refresh(self, note=""):
-        self.finished = not self.game.has_legal_move()
-        machine_turn = self.cpu is not None and self.game.white == self.cpu
-        side = "Blancas" if self.game.white else "Negras"
+        status = self.partida.status()
+        self.finished = status != "jugando"
+        side = self.partida.player
+        machine_turn = not self.finished and side.lower() == self.cpu
         if self.finished:
             winner = "Negras" if self.game.white else "Blancas"
-            title = f"Ganan {winner.lower()}" if self.game.in_check() else "Tablas"
-            note = "Jaque mate" if self.game.in_check() else "Ahogado"
+            title = f"Ganan {winner.lower()}" if status == "jaque_mate" else "Tablas"
+            note = "Jaque mate" if status == "jaque_mate" else "Ahogado"
         elif machine_turn:
             title, note = "Turno de la máquina", "Pensando…"
             if self.pending is None:
@@ -123,7 +123,7 @@ class ChessWindow:
         return (width - size * 8) // 2, (height - size * 8) // 2, size
 
     def axes(self):
-        if self.cpu is True:
+        if self.cpu == "blancas":
             return FILES[::-1], RANKS
         return FILES, RANKS[::-1]
 
@@ -171,7 +171,7 @@ class ChessWindow:
                                        text=file, fill=MUTED, font=("DejaVu Sans", 10))
 
     def click(self, event):
-        if self.finished or (self.cpu is not None and self.game.white == self.cpu):
+        if self.finished or self.partida.player.lower() == self.cpu:
             return
         left, top, size = self.board_geometry()
         col, row = (event.x - left) // size, (event.y - top) // size
@@ -197,15 +197,15 @@ class ChessWindow:
 
     def machine_move(self):
         self.pending = None
-        move = best_move(self.game)
-        if move is not None and self.partida.play(move):
-            self.last_move = move
-            self.refresh()
-        else:
+        try:
+            self.last_move = self.partida.cpu_move()
+        except RuntimeError:
             self.detail.configure(text="La máquina no pudo mover.")
+        else:
+            self.refresh()
 
     def hint(self):
-        move = best_move(self.game)
+        move = self.partida.hint()
         if move:
             self.suggestion = move
             self.refresh(f"Pista · {move[:2]} → {move[2:4]}{move[4:]}")
